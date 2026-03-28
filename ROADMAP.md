@@ -1,137 +1,213 @@
 # School Management System - Development Roadmap
 
-> Stack: Next.js 14 (App Router) · TypeScript · MongoDB Atlas · Mongoose · Tailwind CSS · Lucide Icons
+> Stack: Next.js 14 (App Router) - TypeScript - MongoDB Atlas - Mongoose - Tailwind CSS - Lucide Icons
 > Database: `skool`
-> Last Updated: 2026-03-28
+> Last Updated: 2026-03-29
 
 ---
 
-## Completed So Far
+## Product Direction
 
-| Module | Status | Notes |
-|--------|--------|-------|
-| Project setup | Done | Next.js + Tailwind + MongoDB connected |
-| Landing page | Done | `/` splash page |
-| Admin layout | Done | Sidebar + header shell |
-| Dashboard overview | Done | Live student and teacher counts |
-| Student management | Done | List, add, edit, delete, profile |
-| Teacher management | Done | List, add, edit, delete, profile |
-| Class management | Done | Classes list and class teacher assignment |
-| Attendance module | Done | Record, history, and reporting |
-| Subjects module | Done | CRUD with teacher assignment |
-| Exams and marks | Done | Exams, marks entry, report cards |
-| Fee management | Done | Structures, payments, dues, receipts |
-| Extended seed foundation | Done | Large demo school dataset generator in `scripts/seed.ts` |
+Goal: Build a practical school administration system that supports daily academic operations, fee collection, attendance, examinations, official printouts, and year-round school planning with realistic demo data for manual testing.
+
+---
+
+## Current Product State
+
+### Fully Working Core Areas
+- [x] Admin dashboard shell and navigation
+- [x] Large seeded demo school database in `scripts/seed.ts`
+- [x] Student CRUD, profile, fee summary, academic summary, and document hub
+- [x] Teacher CRUD and profile
+- [x] Class CRUD and class-teacher assignment
+- [x] Subject CRUD with teacher assignment
+- [x] Exam scheduling, marks entry, and calendar sync
+- [x] Attendance recording, history, reports, holiday blocking, list view, and calendar view
+- [x] Calendar events, meetings, holidays, exam events, and month/calendar views
+- [x] Fee structures, payments, dues, receipts, and student fee overview
+- [x] Template management, template preview, and student print-document generation
+
+### Recently Introduced
+- [x] Full-school seed data for grades, sections, teachers, courses, subjects, syllabi, fees, exams, results, attendance, events, and templates
+- [x] Parent-teacher meeting scheduling in calendar
+- [x] Exam timetable print page
+- [x] Attendance register print page
+- [x] Student document print pages:
+  - [x] Bonafide certificate
+  - [x] Transfer certificate
+  - [x] Character certificate
+  - [x] Study certificate
+  - [x] Migration certificate
+  - [x] Fee clearance certificate
+  - [x] Student ID card
+  - [x] Progress report card
+  - [x] Marksheet
+  - [x] Exam admit card
+- [x] Popup-to-page conversion for:
+  - [x] Subjects
+  - [x] Students
+  - [x] Teachers
+  - [x] Classes
+  - [x] Exams
 
 ---
 
 ## Current Priority
 
-> Phase 5 - Calendar, Events, and Academic Planning
+> School-management-first stabilization: finish operational gaps, clean up cross-module UX, and close the highest-value school workflows before auth/portals.
+
+### Immediate Next Build Order
+1. Security and setup cleanup for environment-only secrets and deployment readiness
+2. UI refactor and consistency pass across all admin list/detail/create/edit pages
+3. Course page and syllabus page using existing seeded models
+4. Student identity and admission workflow enhancements
+5. School operations layer: promotion, withdrawal, transfer, archive, and session rollover
 
 ---
 
 ## Phase 0 - Data Foundation and Demo School Setup
 
-Goal: Keep the database realistic enough for full manual testing across all modules.
+Goal: Keep the database realistic enough for full manual testing across all school workflows.
 
+- [x] App and seed scripts read MongoDB connection from environment variables
+- [x] Remove hardcoded MongoDB URI from tracked setup docs
+- [x] Add `.env.example` for local setup
 - [x] Expand seed script to generate classes, students, teachers, subjects, exams, results, fees, payments, attendance, events, and settings
 - [x] Create grade-wise data foundation with 10 students per grade
 - [x] Seed class sections for each grade
 - [x] Seed operational fee data and printable receipt references
 - [x] Seed certificate and print template definitions
-- [ ] Add an optional "safe reseed" mode that preserves admin settings and only refreshes demo records
-- [ ] Add sample parent-facing and teacher-facing users when auth is introduced
+- [x] Seed parent-teacher meeting and exam-event calendar data
+- [ ] Rotate exposed database credentials outside the repository and local thread history
+- [ ] Add optional safe-reseed mode that preserves settings while refreshing demo records
+- [ ] Add seeded transport, inventory, and admission records for operations testing
+- [ ] Add seeded parent-facing and teacher-facing users when auth is introduced
 
 ---
 
-## Phase 1 - Core Entity Management
+## Phase 1 - Core School Records
 
-Goal: Manage the school's main academic entities through CRUD workflows.
+Goal: Manage school master records in a way that aligns with real admissions and staff administration.
 
 ### 1.1 Student Management
-- [x] Add Student
-- [x] Edit Student
-- [x] Delete Student
-- [x] Student Profile Page `/admin/students/[id]`
-- [ ] Student admission number and roll number support
-- [ ] Student document upload references
+- [x] Add student
+- [x] Edit student
+- [x] Delete student
+- [x] Student profile page `/admin/students/[id]`
+- [x] Student create/edit moved from popup to dedicated pages
+- [x] Student documents hub and print outputs
+- [ ] Admission number stored as a first-class field
+- [ ] Roll number stored as a first-class field
+- [ ] Student photo / document upload references
+- [ ] Emergency contact, blood group, house, and transport fields
+- [ ] Previous-school and admission-history details
 
 ### 1.2 Teacher Management
-- [x] Add Teacher
-- [x] Edit Teacher
-- [x] Delete Teacher
-- [x] Teacher Profile Page `/admin/teachers/[id]`
-- [ ] Teacher employee code and joining workflow
+- [x] Add teacher
+- [x] Edit teacher
+- [x] Delete teacher
+- [x] Teacher profile page `/admin/teachers/[id]`
+- [x] Teacher create/edit moved from popup to dedicated pages
+- [ ] Employee code stored as a first-class field
+- [ ] Department / designation / reporting structure
 - [ ] Teacher workload and timetable summary
+- [ ] Leave history and replacement-teacher workflow
 
 ### 1.3 Class and Section Management
 - [x] Class model
 - [x] Classes list page
 - [x] Assign class teacher
-- [ ] Section capacity usage and room allocation
+- [x] Class create/edit moved from popup to dedicated pages
+- [ ] Section capacity usage and actual enrolled count
+- [ ] Room allocation and homeroom assignment
 - [ ] Class promotion workflow for year rollover
+- [ ] Multi-section management for larger grades
+
+### 1.4 Subject Management
+- [x] Subject model and CRUD
+- [x] Subject create/edit moved from popup to dedicated pages
+- [ ] Department grouping and subject category
+- [ ] Subject load per teacher and class mapping report
 
 ---
 
 ## Phase 2 - Attendance System
 
-Goal: Cover the full daily attendance lifecycle.
+Goal: Cover the full daily attendance lifecycle for office, class teachers, and reporting.
 
-### 2.1 Recording
+### 2.1 Recording and Monitoring
 - [x] Per-class per-date attendance form
 - [x] Upsert logic
-- [ ] Attendance lock/freeze after approval
-- [ ] Bulk attendance shortcuts and holiday auto-skip
+- [x] Default date navigation with previous/next controls
+- [x] Grade / section / date filter flow
+- [x] Attendance list and calendar views
+- [x] Holiday-aware attendance blocking
+- [ ] Attendance freeze/approval after submission
+- [ ] Bulk attendance shortcuts and smart presets
+- [ ] Teacher-based attendance ownership
+- [ ] Late-arrival and half-day support
 
 ### 2.2 History and Reports
 - [x] Attendance history page
 - [x] Student monthly attendance summary
 - [x] Class-level attendance report
 - [x] School-wide absentee summary
-- [ ] Printable attendance register
+- [x] Printable attendance register
 - [ ] Attendance defaulter list for low attendance
+- [ ] Parent notification for prolonged absence
+- [ ] Attendance certificate / minimum attendance checks
 
 ---
 
-## Phase 3 - Academics Module
+## Phase 3 - Academics and Curriculum
 
-Goal: Track curriculum, assessments, and performance.
+Goal: Support the planning and assessment structure of a real school year.
 
 ### 3.1 Curriculum Foundation
 - [x] Subject model and CRUD
 - [x] Course model
 - [x] Syllabus model
-- [ ] Course management page
-- [ ] Syllabus management page
-- [ ] Academic term and session planner
+- [ ] Course management page `/admin/courses`
+- [ ] Syllabus management page `/admin/syllabus`
+- [ ] Academic term / session planner
+- [ ] Subject-to-course coverage dashboard
+- [ ] Unit progress tracking against syllabus
 
 ### 3.2 Exams and Marks
 - [x] Exam model
 - [x] Result model
 - [x] Exams page
+- [x] Exam creation moved from popup to dedicated page
 - [x] Marks entry
-- [x] Report card view
+- [x] Report card print layout
+- [x] Marksheet print layout
+- [x] Admit card print layout
+- [x] Exam timetable print layout
+- [x] Exam schedule synced into calendar
 - [ ] Grade scale and remarks configuration
-- [ ] Exam timetable printing
-- [ ] Admit card generation
+- [ ] Exam edit page / exam reschedule flow
+- [ ] Moderation / result publish status
+- [ ] Term-wise consolidated academic ledger
 
 ---
 
-## Phase 4 - Fee Management
+## Phase 4 - Fees and Finance
 
-Goal: Track fee schedules, collections, dues, and printable receipts.
+Goal: Track school fees, collections, dues, and financial printouts in a usable admin workflow.
 
-- [x] Fee Structure model
+- [x] Fee structure model
 - [x] Payment model
 - [x] Fee collection page `/admin/fees`
 - [x] Record payment flow
 - [x] Student/class outstanding dues report
 - [x] Receipt generation page
+- [x] Fee clearance certificate
 - [ ] Fee concessions, scholarships, and waivers
-- [ ] Fine/late-fee rules
+- [ ] Fine / late-fee rules
 - [ ] Installment plans
 - [ ] Daily cash collection report print
+- [ ] Payment cancellation / reversal / audit log
+- [ ] Fee ledger by student and by class
 
 ---
 
@@ -141,161 +217,158 @@ Goal: Maintain the official school calendar and planning layer for the academic 
 
 - [x] Event model
 - [x] Calendar page `/admin/calendar`
-- [x] Monthly calendar grouping view
+- [x] List view and calendar view
 - [x] Add/edit/delete event workflow
 - [x] Holiday management with attendance integration
-- [x] Exam schedule events sync
+- [x] Exam schedule event sync
 - [x] Parent-teacher meeting scheduling
 - [ ] Activity day and assembly planner
 - [ ] Printable academic calendar
+- [ ] Event approval / published status
+- [ ] Staff duty assignment per event
 
 ---
 
-## Phase 6 - Authentication and Roles
+## Phase 6 - Templates, Certificates, and Printouts
 
-Goal: Protect the system and personalize access by role.
+Goal: Cover the official document and print output needs of a school office.
 
-- [ ] Auth setup with credentials provider
+### 6.1 Template Foundation
+- [x] Certificate template model
+- [x] Template management page
+- [x] Placeholder mapping system
+- [x] Template preview page
+- [ ] School branding controls for headers, seals, signatures, and footer text
+- [ ] Print CSS optimization by paper size and orientation
+
+### 6.2 Student Documents
+- [x] Student document hub
+- [x] Bonafide certificate
+- [x] Transfer certificate
+- [x] Character certificate
+- [x] Study certificate
+- [x] Migration certificate
+- [x] Fee clearance certificate
+- [x] Student ID card print
+- [ ] Leaving certificate number register
+- [ ] Bulk document generation by class
+
+### 6.3 Academic Printouts
+- [x] Report card print layout
+- [x] Marksheet print layout
+- [x] Admit card print layout
+- [x] Exam timetable print layout
+- [x] Attendance register print
+- [ ] Class list and section roster print
+- [ ] Result analysis print summary
+
+### 6.4 Administrative and Finance Printouts
+- [x] Fee receipt print
+- [ ] Daily cash collection summary
+- [ ] Outstanding dues notice
+- [ ] Teacher ID card print
+- [ ] Salary / employment certificate
+- [ ] Visitor / gate pass
+
+---
+
+## Phase 7 - School Operations and Office Workflow
+
+Goal: Expand beyond academics into real front-office and annual school administration.
+
+- [ ] Admission enquiry and application tracking
+- [ ] Admission form print
+- [ ] Student onboarding checklist
+- [ ] Student transfer / withdrawal workflow
+- [ ] Student archive / alumni status handling
+- [ ] Class promotion and year rollover
+- [ ] Session-closing checklist for admin office
+- [ ] Inventory hooks for books, uniforms, and stationery
+- [ ] Transport route and pickup assignment
+- [ ] Library and issue-return integration
+
+---
+
+## Phase 8 - Communication and Stakeholder Workflow
+
+Goal: Improve coordination between school office, teachers, students, and parents.
+
+- [ ] Announcement model and management
+- [ ] Fee due reminders
+- [ ] Absence alerts
+- [ ] Exam schedule and result publication alerts
+- [ ] Parent meeting notices from calendar events
+- [ ] Staff circulars and internal notices
+
+---
+
+## Phase 9 - Authentication, Roles, and Portals
+
+Goal: Protect the system and gradually expose role-based experiences.
+
+- [ ] Credentials-based auth setup
 - [ ] User model
 - [ ] Login page `/login`
 - [ ] Route guards for `/admin/**`
 - [ ] Teacher portal `/teacher/**`
 - [ ] Parent portal `/parent/**`
-- [ ] Role-based permissions for print, finance, academics, and admin actions
+- [ ] Role-based print, academics, attendance, and finance permissions
 
 ---
 
-## Phase 7 - Communication and Notifications
+## Phase 10 - UX and Admin Workflow Refinement
 
-Goal: Keep staff, students, and parents informed.
+Goal: Make the product faster to operate for real school-office usage.
 
-- [ ] Announcement model
-- [ ] Announcement management
-- [ ] Email notifications
-- [ ] SMS/WhatsApp hooks
-- [ ] Fee due reminders
-- [ ] Absence alerts
-- [ ] Exam and result publication alerts
-
----
-
-## Phase 8 - Certificates, Documents, and Printouts
-
-Goal: Cover the real printable outputs schools need day to day.
-
-### 8.1 Template Foundation
-- [x] Certificate template model
-- [ ] Template management page
-- [ ] Placeholder mapping system for dynamic printing
-- [ ] School branding controls for headers, seals, and signatures
-
-### 8.2 Student Documents
-- [ ] Bonafide certificate
-- [ ] Transfer certificate
-- [ ] Character certificate
-- [ ] Study certificate
-- [ ] Migration certificate
-- [ ] Fee clearance certificate
-- [ ] Student ID card print
-
-### 8.3 Academic Printouts
-- [ ] Report card print layout
-- [ ] Marksheet print layout
-- [ ] Admit card print layout
-- [ ] Exam timetable print layout
-- [ ] Attendance register print
-- [ ] Class list and section roster print
-
-### 8.4 Administrative and Finance Printouts
-- [x] Fee receipt print
-- [ ] Cash collection summary print
-- [ ] Outstanding dues notice
-- [ ] Teacher ID card print
-- [ ] Salary certificate / employment certificate
-- [ ] Visitor pass / gate pass
+- [x] Convert subject create/edit popup to route pages
+- [x] Convert student create/edit popup to route pages
+- [x] Convert teacher create/edit popup to route pages
+- [x] Convert class create/edit popup to route pages
+- [x] Convert exam create popup to route page
+- [ ] Convert calendar and fees modal flows to route pages
+- [ ] Standardize page headers, breadcrumbs, and action bars
+- [ ] Improve table density, mobile behavior, and empty states
+- [ ] Add summary cards where they improve operator visibility
+- [ ] Remove remaining legacy text / encoding / rough UI artifacts
+- [ ] Add confirmation and success UX patterns beyond alert/confirm
 
 ---
 
-## Phase 9 - Admissions and School Operations
+## Highest-Value Pending Gaps
 
-Goal: Cover the operational workflows a school office needs beyond academics.
+These are the most logical school-management gaps still pending:
 
-- [ ] Admission enquiry and application tracking
-- [ ] Admission form print
-- [ ] Student onboarding checklist
-- [ ] Class promotion and rollover
-- [ ] Student transfer and withdrawal workflow
-- [ ] Alumni/archive status handling
-- [ ] Inventory hooks for uniforms, books, and transport
-- [ ] Transport route and pickup assignment
-
----
-
-## Phase 10 - Analytics and Reporting
-
-Goal: Give administrators actionable visibility across the school.
-
-- [ ] Attendance trends
-- [ ] Grade distribution charts
-- [ ] Fee collection progress
-- [ ] Top/bottom performers
-- [ ] Enrollment trend analytics
-- [ ] Teacher workload insights
-- [ ] Calendar utilization and event summary
+1. Student identity workflow
+   Admission number, roll number, document references, and richer admission details still need to become first-class data instead of derived display-only values.
+2. Course and syllabus admin pages
+   The models and seed data exist, but admin users still cannot manage course structures and syllabus planning from the UI.
+3. Session rollover and promotion
+   A school system needs class promotion, transfer, withdrawal, archive, and academic-year transition workflows to be operationally complete.
+4. Finance maturity
+   Waivers, fines, installments, cash-summary printouts, and payment audit handling are still missing from the fee office workflow.
+5. Role-based usage
+   Everything currently behaves like an admin-only internal system; teacher and parent workflows are not exposed yet.
+6. Office operations
+   Admission pipeline, transport, inventory, library, and document registers are still absent even though they are natural school-office extensions.
+7. UX polish
+   The main route conversion is underway, but calendar and fees still use modal patterns, and the overall admin UI needs a consistency pass.
 
 ---
 
-## Suggested Next Build Order
-
-1. Phase 5 calendar UI and event CRUD
-2. Course and syllabus pages using the new seeded models
-3. Phase 8 template management and printable document screens
-4. Admission and school-operations workflows
-5. Authentication and role-based portals
-
----
-
-## File and Folder Convention
+## Folder Direction
 
 ```text
-src/
-|-- app/
-|   |-- admin/
-|   |   |-- page.tsx
-|   |   |-- layout.tsx
-|   |   |-- students/
-|   |   |-- teachers/
-|   |   |-- classes/
-|   |   |-- attendance/
-|   |   |-- subjects/
-|   |   |-- exams/
-|   |   |-- fees/
-|   |   |-- calendar/
-|   |   |-- courses/
-|   |   |-- syllabus/
-|   |   `-- templates/
-|   |-- login/
-|   `-- page.tsx
-|-- lib/
-|   `-- mongodb.ts
-`-- models/
-    |-- Attendance.ts
-    |-- CertificateTemplate.ts
-    |-- Class.ts
-    |-- Course.ts
-    |-- Event.ts
-    |-- Exam.ts
-    |-- FeeStructure.ts
-    |-- Payment.ts
-    |-- Result.ts
-    |-- Setting.ts
-    |-- Student.ts
-    |-- Subject.ts
-    |-- Syllabus.ts
-    |-- Teacher.ts
-    `-- User.ts
+src/app/admin/
+|-- attendance/
+|-- calendar/
+|-- classes/
+|-- exams/
+|-- fees/
+|-- settings/
+|-- students/
+|-- subjects/
+|-- teachers/
+`-- templates/
 ```
 
----
-
-This file is the working roadmap and should be updated whenever a phase or sub-module is completed.
+This roadmap should be updated whenever a meaningful workflow, printout, route conversion, or school-operations feature is completed.

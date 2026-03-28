@@ -153,6 +153,12 @@ export default async function StudentProfilePage({ params }: { params: { id: str
         <ArrowLeft size={16} />
         Back to Students
       </Link>
+      <Link
+        href={`/admin/students/${id}/documents`}
+        className="mt-3 inline-flex items-center gap-2 rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-500/20 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20"
+      >
+        Open Documents
+      </Link>
 
       {/* Hero Card */}
       <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-zinc-800 shadow-sm overflow-hidden">

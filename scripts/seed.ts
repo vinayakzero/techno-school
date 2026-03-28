@@ -14,9 +14,11 @@ import Subject from "../src/models/Subject";
 import Syllabus from "../src/models/Syllabus";
 import Teacher from "../src/models/Teacher";
 
-const MONGODB_URI =
-  process.env.MONGODB_URI ||
-  "mongodb+srv://vk_db_user:bJDjr4OvWNMXkNkF@vk0.ksj1gsp.mongodb.net/skool";
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  throw new Error("Please define the MONGODB_URI environment variable inside .env.local");
+}
 
 const GRADES = Array.from({ length: 12 }, (_, index) => `Grade ${index + 1}`);
 const SECTIONS = ["A", "B"];

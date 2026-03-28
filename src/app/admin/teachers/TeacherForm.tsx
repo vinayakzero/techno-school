@@ -1,19 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useRef } from "react";
-import { X, Loader2 } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { createTeacherAction, updateTeacherAction } from "./actions";
-
-interface TeacherFormProps {
-  onClose: () => void;
-  onSuccess: () => void;
-  teacher?: any;
-}
 
 const GENDERS = ["Male", "Female", "Other"];
 const STATUSES = ["Active", "On Leave", "Inactive"];
 
-export default function TeacherForm({ onClose, onSuccess, teacher }: TeacherFormProps) {
+export default function TeacherForm({ teacher, backHref = "/admin/teachers" }: { teacher?: any; backHref?: string }) {
+  const router = useRouter();
   const isEdit = !!teacher;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -29,8 +26,8 @@ export default function TeacherForm({ onClose, onSuccess, teacher }: TeacherForm
       : await createTeacherAction(formData);
     setIsSubmitting(false);
     if (result.success) {
-      onSuccess();
-      onClose();
+      router.push("/admin/teachers");
+      router.refresh();
     } else {
       setError(result.error || "Something went wrong.");
     }
@@ -40,29 +37,26 @@ export default function TeacherForm({ onClose, onSuccess, teacher }: TeacherForm
   const labelClass = "block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-1";
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col border border-gray-200 dark:border-zinc-800">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 dark:border-zinc-800 shrink-0">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-zinc-100">
-              {isEdit ? "Edit Teacher" : "Add New Teacher"}
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-zinc-400 mt-0.5">
-              {isEdit ? "Update faculty member information." : "Fill in the details to add a new faculty member."}
-            </p>
-          </div>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-200 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors">
-            <X size={20} />
-          </button>
-        </div>
+    <div className="mx-auto max-w-4xl space-y-6">
+      <div>
+        <Link href={backHref} className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition-colors hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400">
+          <ArrowLeft size={16} />
+          Back to Teachers
+        </Link>
+        <h1 className="mt-3 text-3xl font-bold text-gray-900 dark:text-zinc-100">
+          {isEdit ? "Edit Teacher" : "Add New Teacher"}
+        </h1>
+        <p className="mt-1 text-sm text-gray-500 dark:text-zinc-400">
+          {isEdit ? "Update faculty member information." : "Fill in the details to add a new faculty member."}
+        </p>
+      </div>
 
-        {/* Form Body */}
-        <div className="overflow-y-auto flex-1 px-6 py-5">
+      <div className="rounded-2xl border border-gray-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="overflow-y-auto px-6 py-5">
           <form ref={formRef} onSubmit={handleSubmit} id="teacher-form">
             <div className="space-y-5">
               <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Personal Information</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className={labelClass}>Full Name *</label>
                   <input name="name" type="text" required defaultValue={teacher?.name} className={inputClass} placeholder="e.g. Prof. John Smith" />
@@ -92,8 +86,8 @@ export default function TeacherForm({ onClose, onSuccess, teacher }: TeacherForm
                 </div>
               </div>
 
-              <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500 pt-2">Professional Details</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <p className="pt-2 text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-zinc-500">Professional Details</p>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
                   <label className={labelClass}>Subject(s) *</label>
                   <input name="subject" type="text" required defaultValue={teacher?.subject} className={inputClass} placeholder="Mathematics, Physics" />
@@ -119,21 +113,20 @@ export default function TeacherForm({ onClose, onSuccess, teacher }: TeacherForm
                 <div>
                   <label className={labelClass}>Assigned Classes</label>
                   <input name="classes" type="text" defaultValue={teacher?.classes?.join(", ")} className={inputClass} placeholder="Grade 10, Grade 12" />
-                  <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">Comma-separated list of grades.</p>
+                  <p className="mt-1 text-xs text-gray-400 dark:text-zinc-500">Comma-separated list of grades.</p>
                 </div>
               </div>
             </div>
           </form>
         </div>
 
-        {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 dark:border-zinc-800 flex items-center justify-between gap-4 shrink-0 bg-gray-50/50 dark:bg-zinc-900/50 rounded-b-2xl">
+        <div className="flex items-center justify-between gap-4 rounded-b-2xl border-t border-gray-200 bg-gray-50/50 px-6 py-4 dark:border-zinc-800 dark:bg-zinc-900/50">
           {error && <p className="text-sm text-red-600 dark:text-red-400">{error}</p>}
-          <div className="flex gap-3 ml-auto">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors">
+          <div className="ml-auto flex gap-3">
+            <Link href={backHref} className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800">
               Cancel
-            </button>
-            <button form="teacher-form" type="submit" disabled={isSubmitting} className="inline-flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white hover:bg-blue-500 transition-colors disabled:opacity-60 shadow-sm">
+            </Link>
+            <button form="teacher-form" type="submit" disabled={isSubmitting} className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-500 disabled:opacity-60">
               {isSubmitting && <Loader2 size={15} className="animate-spin" />}
               {isEdit ? "Save Changes" : "Add Teacher"}
             </button>

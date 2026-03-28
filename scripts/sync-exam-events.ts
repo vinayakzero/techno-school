@@ -3,9 +3,11 @@ import Exam from "../src/models/Exam";
 import Event from "../src/models/Event";
 import { syncExamEvent } from "../src/lib/calendar";
 
-const MONGODB_URI =
-  process.env.MONGODB_URI ||
-  "mongodb+srv://vk_db_user:bJDjr4OvWNMXkNkF@vk0.ksj1gsp.mongodb.net/skool";
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  throw new Error("MONGODB_URI environment variable is required.");
+}
 
 async function run() {
   try {

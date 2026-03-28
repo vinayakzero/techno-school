@@ -5,7 +5,7 @@ import ClassModel from "@/models/Class";
 import Event from "@/models/Event";
 import AttendanceForm from "./AttendanceForm";
 import Link from "next/link";
-import { BarChart3, Calendar, Filter, History, Flag, Sparkles, ChevronLeft, ChevronRight, LayoutList, CalendarDays } from "lucide-react";
+import { BarChart3, Calendar, Filter, History, Flag, Sparkles, ChevronLeft, ChevronRight, LayoutList, CalendarDays, Printer } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
@@ -108,6 +108,13 @@ export default async function AttendancePage({ searchParams }: { searchParams: {
           <p className="text-gray-500 dark:text-zinc-400">Record and monitor daily student attendance by class.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <Link
+            href={`/admin/attendance/register?grade=${encodeURIComponent(gradeParam || "")}&section=${encodeURIComponent(sectionParam || "")}&month=${dateParam.slice(0, 7)}`}
+            className="inline-flex items-center justify-center gap-2 rounded-lg text-sm font-semibold bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-800 h-10 px-4 shadow-sm hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+          >
+            <Printer size={18} />
+            Print Register
+          </Link>
           <Link
             href="/admin/attendance/history"
             className="inline-flex items-center justify-center gap-2 rounded-lg text-sm font-semibold bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-300 border border-gray-200 dark:border-zinc-800 h-10 px-4 shadow-sm hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"

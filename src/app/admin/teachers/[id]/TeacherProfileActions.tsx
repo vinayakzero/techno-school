@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 import { Edit2, Trash2 } from "lucide-react";
-import TeacherForm from "../TeacherForm";
 import { deleteTeacherAction } from "../actions";
 import { useRouter } from "next/navigation";
 
 export default function TeacherProfileActions({ teacher }: { teacher: any }) {
-  const [showForm, setShowForm] = useState(false);
   const router = useRouter();
 
   const handleDelete = async () => {
@@ -18,25 +16,18 @@ export default function TeacherProfileActions({ teacher }: { teacher: any }) {
 
   return (
     <>
-      <button
-        onClick={() => setShowForm(true)}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 transition-colors"
+      <Link
+        href={`/admin/teachers/${teacher._id}/edit`}
+        className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
       >
         <Edit2 size={15} /> Edit
-      </button>
+      </Link>
       <button
         onClick={handleDelete}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border border-red-200 dark:border-red-800/50 bg-red-50 dark:bg-red-900/10 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/20 transition-colors"
+        className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100 dark:border-red-800/50 dark:bg-red-900/10 dark:text-red-400 dark:hover:bg-red-900/20"
       >
         <Trash2 size={15} /> Delete
       </button>
-      {showForm && (
-        <TeacherForm
-          teacher={teacher}
-          onClose={() => setShowForm(false)}
-          onSuccess={() => router.refresh()}
-        />
-      )}
     </>
   );
 }
