@@ -52,6 +52,7 @@ function formatDate(value: Date | string | undefined) {
 }
 
 function getAdmissionNo(student: any) {
+  if (student.admissionNumber) return student.admissionNumber;
   return `ADM-${new Date(student.enrollmentDate || Date.now()).getFullYear()}-${student._id
     .toString()
     .slice(-5)
@@ -59,6 +60,7 @@ function getAdmissionNo(student: any) {
 }
 
 function getRollNo(student: any) {
+  if (student.rollNumber) return student.rollNumber;
   return `${student.grade.replace("Grade ", "")}${student.section}${student._id
     .toString()
     .slice(-2)

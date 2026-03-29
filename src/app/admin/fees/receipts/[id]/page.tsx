@@ -56,6 +56,9 @@ export default async function FeeReceiptPage({ params }: { params: { id: string 
             <ReceiptRow label="Payment Date" value={new Date(payment.date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })} />
             <ReceiptRow label="Payment Mode" value={payment.mode} />
             <ReceiptRow label="Amount Paid" value={`${currencySymbol}${payment.amount.toLocaleString()}`} highlight />
+            <ReceiptRow label="Fee Credit" value={`${currencySymbol}${Number((payment as any).baseAmount ?? payment.amount ?? 0).toLocaleString()}`} />
+            <ReceiptRow label="Waiver" value={`${currencySymbol}${Number((payment as any).waiverAmount || 0).toLocaleString()}`} />
+            <ReceiptRow label="Fine" value={`${currencySymbol}${Number((payment as any).fineAmount || 0).toLocaleString()}`} />
           </ReceiptBlock>
 
           <ReceiptBlock title="Student Details">
@@ -70,6 +73,8 @@ export default async function FeeReceiptPage({ params }: { params: { id: string 
             <ReceiptRow label="Category" value={structure?.category || "General"} />
             <ReceiptRow label="Due Date" value={structure?.dueDate ? new Date(structure.dueDate).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "-"} />
             <ReceiptRow label="Recorded Grade" value={payment.grade} />
+            <ReceiptRow label="Installment" value={(payment as any).installmentLabel || "-"} />
+            <ReceiptRow label="Collected By" value={(payment as any).collectedBy || "-"} />
           </ReceiptBlock>
 
           <ReceiptBlock title="Notes">

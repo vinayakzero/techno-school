@@ -2,17 +2,15 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { CreditCard, FileText, Filter, Pencil, Plus, Receipt, Search, Trash2, Wallet } from "lucide-react";
+import { CreditCard, FileText, Filter, Landmark, Pencil, Plus, Receipt, Search, ShieldCheck, Trash2, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
-import FeeStructureForm from "./FeeStructureForm";
-import PaymentForm from "./PaymentForm";
 import { deleteFeeStructureAction, deletePaymentAction } from "./actions";
 
 function formatMoney(amount: number, currencySymbol: string) {
   return `${currencySymbol}${amount.toLocaleString()}`;
 }
 
-function getFeeValue(student: any, key: "total" | "paid" | "pending") {
+function getFeeValue(student: any, key: "total" | "paid" | "pending" | "waived" | "fine" | "collected") {
   return Number(student?.fees?.[key] || 0);
 }
 
@@ -30,10 +28,6 @@ export default function FeesClient({
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [showStructureForm, setShowStructureForm] = useState(false);
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
-  const [editingStructure, setEditingStructure] = useState<any>(null);
-  const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null);
 
   const filteredStudents = useMemo(() => {
     return students.filter((student) => {
@@ -57,15 +51,12 @@ export default function FeesClient({
     const totalAssigned = students.reduce((sum, student) => sum + getFeeValue(student, "total"), 0);
     const totalCollected = students.reduce((sum, student) => sum + getFeeValue(student, "paid"), 0);
     const totalOutstanding = students.reduce((sum, student) => sum + getFeeValue(student, "pending"), 0);
+    const totalWaived = students.reduce((sum, student) => sum + getFeeValue(student, "waived"), 0);
+    const totalFine = students.reduce((sum, student) => sum + getFeeValue(student, "fine"), 0);
     const fullyPaidCount = students.filter((student) => getFeeValue(student, "pending") <= 0 && getFeeValue(student, "total") > 0).length;
 
-    return { totalAssigned, totalCollected, totalOutstanding, fullyPaidCount };
+    return { totalAssigned, totalCollected, totalOutstanding, totalWaived, totalFine, fullyPaidCount };
   }, [students]);
-
-  const handleStructureEdit = (structure: any) => {
-    setEditingStructure(structure);
-    setShowStructureForm(true);
-  };
 
   const handleStructureDelete = async (id: string, title: string) => {
     if (confirm(`Delete fee structure "${title}"? This will recalculate balances for that grade.`)) {
@@ -87,38 +78,32 @@ export default function FeesClient({
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Fee Management</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-zinc-400">
-            Manage grade-wise fee structures, collect payments, and monitor outstanding balances.
+            Manage fee structures, concessions, installment receipts, and daily cash-office visibility.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
-          <button
-            onClick={() => {
-              setEditingStructure(null);
-              setShowStructureForm(true);
-            }}
-            className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700"
-          >
+          <Link href="/admin/fees/structures/new" className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700">
             <Plus size={16} />
             Add Fee Structure
-          </button>
-          <button
-            onClick={() => {
-              setSelectedStudentId(null);
-              setShowPaymentForm(true);
-            }}
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700"
-          >
+          </Link>
+          <Link href="/admin/fees/payments/new" className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-700">
             <Wallet size={16} />
             Record Payment
-          </button>
+          </Link>
+          <Link href="/admin/fees/daily-collection" className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800">
+            <Landmark size={16} />
+            Daily Collection
+          </Link>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
         <SummaryCard icon={<FileText className="h-5 w-5 text-blue-600" />} label="Assigned Fees" value={formatMoney(summary.totalAssigned, currencySymbol)} tone="blue" />
-        <SummaryCard icon={<CreditCard className="h-5 w-5 text-emerald-600" />} label="Collected" value={formatMoney(summary.totalCollected, currencySymbol)} tone="emerald" />
+        <SummaryCard icon={<CreditCard className="h-5 w-5 text-emerald-600" />} label="Credited" value={formatMoney(summary.totalCollected, currencySymbol)} tone="emerald" />
         <SummaryCard icon={<Receipt className="h-5 w-5 text-amber-600" />} label="Outstanding" value={formatMoney(summary.totalOutstanding, currencySymbol)} tone="amber" />
-        <SummaryCard icon={<Wallet className="h-5 w-5 text-violet-600" />} label="Fully Paid Students" value={summary.fullyPaidCount.toString()} tone="violet" />
+        <SummaryCard icon={<Wallet className="h-5 w-5 text-violet-600" />} label="Fully Paid" value={summary.fullyPaidCount.toString()} tone="violet" />
+        <SummaryCard icon={<ShieldCheck className="h-5 w-5 text-sky-600" />} label="Waived" value={formatMoney(summary.totalWaived, currencySymbol)} tone="sky" />
+        <SummaryCard icon={<Landmark className="h-5 w-5 text-rose-600" />} label="Fine Collected" value={formatMoney(summary.totalFine, currencySymbol)} tone="rose" />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.6fr_1fr]">
@@ -127,7 +112,7 @@ export default function FeesClient({
             <div>
               <h2 className="text-lg font-bold text-gray-900 dark:text-zinc-100">Student Fee Report</h2>
               <p className="mt-1 text-sm text-gray-500 dark:text-zinc-400">
-                Filter by payment status to review dues by student.
+                Filter by status and review core fees, concessions, and fine activity by student.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
@@ -163,7 +148,7 @@ export default function FeesClient({
                   <th className="px-6 py-4 font-semibold">Student</th>
                   <th className="px-6 py-4 font-semibold">Grade</th>
                   <th className="px-6 py-4 font-semibold">Assigned</th>
-                  <th className="px-6 py-4 font-semibold">Paid</th>
+                  <th className="px-6 py-4 font-semibold">Credited</th>
                   <th className="px-6 py-4 font-semibold">Pending</th>
                   <th className="px-6 py-4 font-semibold text-right">Actions</th>
                 </tr>
@@ -199,19 +184,28 @@ export default function FeesClient({
                         }`}>
                           {formatMoney(getFeeValue(student, "pending"), currencySymbol)}
                         </span>
+                        <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                          {getFeeValue(student, "waived") > 0 && (
+                            <span className="rounded-full bg-sky-50 px-2.5 py-1 font-semibold text-sky-700 dark:bg-sky-500/10 dark:text-sky-300">
+                              Waived {formatMoney(getFeeValue(student, "waived"), currencySymbol)}
+                            </span>
+                          )}
+                          {getFeeValue(student, "fine") > 0 && (
+                            <span className="rounded-full bg-rose-50 px-2.5 py-1 font-semibold text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
+                              Fine {formatMoney(getFeeValue(student, "fine"), currencySymbol)}
+                            </span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => {
-                              setSelectedStudentId(student._id);
-                              setShowPaymentForm(true);
-                            }}
+                          <Link
+                            href={`/admin/fees/payments/new?studentId=${student._id}`}
                             className="rounded-lg bg-emerald-50 p-2 text-emerald-600 transition-colors hover:bg-emerald-100 dark:bg-emerald-500/10 dark:text-emerald-400"
                             title="Record payment"
                           >
                             <Wallet size={16} />
-                          </button>
+                          </Link>
                           <Link
                             href={`/admin/students/${student._id}`}
                             className="rounded-lg bg-blue-50 p-2 text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-500/10 dark:text-blue-400"
@@ -262,18 +256,30 @@ export default function FeesClient({
                       <p className="mt-2 text-base font-bold text-gray-900 dark:text-zinc-100">
                         {formatMoney(structure.amount, currencySymbol)}
                       </p>
+                      <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                        {Number(structure.lateFeeAmount || 0) > 0 && (
+                          <span className="rounded-full bg-rose-50 px-2.5 py-1 font-semibold text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
+                            Late fee {formatMoney(Number(structure.lateFeeAmount || 0), currencySymbol)}
+                          </span>
+                        )}
+                        {structure.installmentAllowed && (
+                          <span className="rounded-full bg-sky-50 px-2.5 py-1 font-semibold text-sky-700 dark:bg-sky-500/10 dark:text-sky-300">
+                            {structure.installmentCount || 1} installments
+                          </span>
+                        )}
+                      </div>
                       <p className="mt-1 text-xs text-gray-500 dark:text-zinc-500">
                         Due {new Date(structure.dueDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                       </p>
                     </div>
                     <div className="flex gap-2">
-                      <button
-                        onClick={() => handleStructureEdit(structure)}
+                      <Link
+                        href={`/admin/fees/structures/${structure._id}/edit`}
                         className="rounded-lg p-2 text-blue-600 transition-colors hover:bg-blue-50 dark:hover:bg-blue-500/10"
                         title="Edit fee structure"
                       >
                         <Pencil size={16} />
-                      </button>
+                      </Link>
                       <button
                         onClick={() => handleStructureDelete(structure._id, structure.title)}
                         className="rounded-lg p-2 text-red-600 transition-colors hover:bg-red-50 dark:hover:bg-red-500/10"
@@ -311,6 +317,23 @@ export default function FeesClient({
                       <p className="mt-2 text-base font-bold text-emerald-600 dark:text-emerald-400">
                         {formatMoney(payment.amount, currencySymbol)}
                       </p>
+                      <div className="mt-2 flex flex-wrap gap-2 text-xs">
+                        {Number(payment.waiverAmount || 0) > 0 && (
+                          <span className="rounded-full bg-sky-50 px-2.5 py-1 font-semibold text-sky-700 dark:bg-sky-500/10 dark:text-sky-300">
+                            Waiver {formatMoney(Number(payment.waiverAmount || 0), currencySymbol)}
+                          </span>
+                        )}
+                        {Number(payment.fineAmount || 0) > 0 && (
+                          <span className="rounded-full bg-rose-50 px-2.5 py-1 font-semibold text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">
+                            Fine {formatMoney(Number(payment.fineAmount || 0), currencySymbol)}
+                          </span>
+                        )}
+                        {payment.installmentLabel && (
+                          <span className="rounded-full bg-blue-50 px-2.5 py-1 font-semibold text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
+                            {payment.installmentLabel}
+                          </span>
+                        )}
+                      </div>
                       <p className="mt-1 text-xs text-gray-500 dark:text-zinc-500">{payment.receiptNo}</p>
                     </div>
                     <div className="flex gap-2">
@@ -336,41 +359,18 @@ export default function FeesClient({
           </div>
         </section>
       </div>
-
-      {showStructureForm && (
-        <FeeStructureForm
-          feeStructure={editingStructure}
-          onClose={() => {
-            setShowStructureForm(false);
-            setEditingStructure(null);
-          }}
-          onSuccess={() => {}}
-        />
-      )}
-
-      {showPaymentForm && (
-        <PaymentForm
-          students={students}
-          feeStructures={feeStructures}
-          initialStudentId={selectedStudentId}
-          currencySymbol={currencySymbol}
-          onClose={() => {
-            setShowPaymentForm(false);
-            setSelectedStudentId(null);
-          }}
-          onSuccess={() => {}}
-        />
-      )}
     </div>
   );
 }
 
-function SummaryCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: "blue" | "emerald" | "amber" | "violet" }) {
+function SummaryCard({ icon, label, value, tone }: { icon: React.ReactNode; label: string; value: string; tone: "blue" | "emerald" | "amber" | "violet" | "sky" | "rose" }) {
   const tones = {
     blue: "from-blue-50 to-white dark:from-blue-500/10 dark:to-zinc-900",
     emerald: "from-emerald-50 to-white dark:from-emerald-500/10 dark:to-zinc-900",
     amber: "from-amber-50 to-white dark:from-amber-500/10 dark:to-zinc-900",
     violet: "from-violet-50 to-white dark:from-violet-500/10 dark:to-zinc-900",
+    sky: "from-sky-50 to-white dark:from-sky-500/10 dark:to-zinc-900",
+    rose: "from-rose-50 to-white dark:from-rose-500/10 dark:to-zinc-900",
   };
 
   return (

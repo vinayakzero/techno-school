@@ -392,10 +392,13 @@ async function seed() {
           const name = buildStudentName(studentIndex);
           const parentName = `${buildStudentName(studentIndex + 30)} ${studentIndex % 2 === 0 ? "Sr." : "Mrs."}`;
           const classKey = `${grade}-${section}`;
+          const rollNumber = `${gradeIndex + 1}${section}${String(localIndex + 1).padStart(2, "0")}`;
+          const admissionNumber = `ADM-2026-${String(studentIndex + 1).padStart(4, "0")}`;
           return {
             name,
             email: makeEmail(name, `s${studentIndex + 1}`),
             phone: `800200${String(studentIndex + 1).padStart(4, "0")}`,
+            admissionNumber,
             grade,
             section,
             status: getStudentStatus(studentIndex),
@@ -408,16 +411,16 @@ async function seed() {
             fees: { total: 0, paid: 0, pending: 0 },
             avatar: "",
             classKey,
-            rollNumber: `${gradeIndex + 1}${section}${String(localIndex + 1).padStart(2, "0")}`,
+            rollNumber,
           };
         })
       )
     );
 
     const students = await Student.insertMany(
-      studentsPayload.map(({ classKey, rollNumber, ...student }) => ({
+      studentsPayload.map(({ classKey, ...student }) => ({
         ...student,
-        address: `${student.address} | Roll ${rollNumber}`,
+        address: student.address,
       }))
     );
     console.log(`Inserted ${students.length} students`);

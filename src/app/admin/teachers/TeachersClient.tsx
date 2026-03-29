@@ -76,7 +76,7 @@ export default function TeachersClient({ teachers: initialTeachers }: { teachers
                         {teacher.name.split(" ").map((n: string) => n[0].replace(/[^a-zA-Z]/g, "")).join("").substring(0, 2)}
                       </div>
                       <div>
-                        <a href={`/admin/teachers/${teacher._id}`} className="font-semibold text-gray-900 transition-colors hover:text-blue-600 dark:text-zinc-100 dark:hover:text-blue-400">{teacher.name}</a>
+                        <Link href={`/admin/teachers/${teacher._id}`} className="font-semibold text-gray-900 transition-colors hover:text-blue-600 dark:text-zinc-100 dark:hover:text-blue-400">{teacher.name}</Link>
                         <div className="text-xs text-gray-500 dark:text-zinc-400">{teacher.email}</div>
                       </div>
                     </div>

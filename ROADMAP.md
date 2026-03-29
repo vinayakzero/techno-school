@@ -59,9 +59,9 @@ Goal: Build a practical school administration system that supports daily academi
 ### Immediate Next Build Order
 1. Security and setup cleanup for environment-only secrets and deployment readiness
 2. UI refactor and consistency pass across all admin list/detail/create/edit pages
-3. Course page and syllabus page using existing seeded models
-4. Student identity and admission workflow enhancements
-5. School operations layer: promotion, withdrawal, transfer, archive, and session rollover
+3. Student identity and admission workflow enhancements
+4. School operations layer: promotion, withdrawal, transfer, archive, and session rollover
+5. Calendar route conversion and broader UI consistency cleanup
 
 ---
 
@@ -96,11 +96,13 @@ Goal: Manage school master records in a way that aligns with real admissions and
 - [x] Student profile page `/admin/students/[id]`
 - [x] Student create/edit moved from popup to dedicated pages
 - [x] Student documents hub and print outputs
-- [ ] Admission number stored as a first-class field
-- [ ] Roll number stored as a first-class field
+- [x] Admission number stored as a first-class field
+- [x] Roll number stored as a first-class field
 - [ ] Student photo / document upload references
-- [ ] Emergency contact, blood group, house, and transport fields
-- [ ] Previous-school and admission-history details
+- [x] Emergency contact, blood group, and house fields
+- [ ] Transport fields
+- [x] Previous-school details
+- [ ] Admission-history timeline
 
 ### 1.2 Teacher Management
 - [x] Add teacher
@@ -167,8 +169,8 @@ Goal: Support the planning and assessment structure of a real school year.
 - [x] Subject model and CRUD
 - [x] Course model
 - [x] Syllabus model
-- [ ] Course management page `/admin/courses`
-- [ ] Syllabus management page `/admin/syllabus`
+- [x] Course management page `/admin/courses`
+- [x] Syllabus management page `/admin/syllabus`
 - [ ] Academic term / session planner
 - [ ] Subject-to-course coverage dashboard
 - [ ] Unit progress tracking against syllabus
@@ -202,10 +204,11 @@ Goal: Track school fees, collections, dues, and financial printouts in a usable 
 - [x] Student/class outstanding dues report
 - [x] Receipt generation page
 - [x] Fee clearance certificate
-- [ ] Fee concessions, scholarships, and waivers
-- [ ] Fine / late-fee rules
-- [ ] Installment plans
-- [ ] Daily cash collection report print
+- [x] Fee concessions, scholarships, and waivers
+- [x] Fine / late-fee rules
+- [x] Installment plans
+- [x] Daily cash collection report print
+- [x] Fee create/edit/payment flows moved to dedicated pages
 - [ ] Payment cancellation / reversal / audit log
 - [ ] Fee ledger by student and by class
 
@@ -264,7 +267,7 @@ Goal: Cover the official document and print output needs of a school office.
 
 ### 6.4 Administrative and Finance Printouts
 - [x] Fee receipt print
-- [ ] Daily cash collection summary
+- [x] Daily cash collection summary
 - [ ] Outstanding dues notice
 - [ ] Teacher ID card print
 - [ ] Salary / employment certificate
@@ -279,8 +282,8 @@ Goal: Expand beyond academics into real front-office and annual school administr
 - [ ] Admission enquiry and application tracking
 - [ ] Admission form print
 - [ ] Student onboarding checklist
-- [ ] Student transfer / withdrawal workflow
-- [ ] Student archive / alumni status handling
+- [x] Student transfer / withdrawal workflow
+- [x] Student archive / alumni status handling
 - [ ] Class promotion and year rollover
 - [ ] Session-closing checklist for admin office
 - [ ] Inventory hooks for books, uniforms, and stationery
@@ -338,20 +341,20 @@ Goal: Make the product faster to operate for real school-office usage.
 
 These are the most logical school-management gaps still pending:
 
-1. Student identity workflow
-   Admission number, roll number, document references, and richer admission details still need to become first-class data instead of derived display-only values.
-2. Course and syllabus admin pages
-   The models and seed data exist, but admin users still cannot manage course structures and syllabus planning from the UI.
-3. Session rollover and promotion
-   A school system needs class promotion, transfer, withdrawal, archive, and academic-year transition workflows to be operationally complete.
-4. Finance maturity
-   Waivers, fines, installments, cash-summary printouts, and payment audit handling are still missing from the fee office workflow.
+1. Student admission records
+   Identity and intake fields are now first-class, but admission-history timelines, uploads, and transport mapping are still missing.
+2. Session rollover and promotion
+   Promotion, transfer, withdrawal, and archive actions now exist, but full academic-year rollover and bulk promotion are still needed.
+3. Finance maturity
+   The fee office now supports waivers, fines, installments, and daily summaries, but cancellation audit trails and detailed ledgers are still pending.
+4. Calendar and admin UX consistency
+   Fees now use dedicated pages, but calendar workflows still need the same route-based cleanup and shared page-header consistency.
 5. Role-based usage
    Everything currently behaves like an admin-only internal system; teacher and parent workflows are not exposed yet.
 6. Office operations
    Admission pipeline, transport, inventory, library, and document registers are still absent even though they are natural school-office extensions.
 7. UX polish
-   The main route conversion is underway, but calendar and fees still use modal patterns, and the overall admin UI needs a consistency pass.
+   The main route conversion is underway, but calendar still needs the same route-based cleanup and the overall admin UI needs a consistency pass.
 
 ---
 

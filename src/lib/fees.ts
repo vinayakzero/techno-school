@@ -9,24 +9,36 @@ type StudentFeeSnapshot = {
     total?: number;
     paid?: number;
     pending?: number;
+    waived?: number;
+    fine?: number;
+    collected?: number;
   };
 };
 
 export async function calculateStudentFeeSummary(student: StudentFeeSnapshot) {
   const [structures, payments] = await Promise.all([
     FeeStructure.find({ grade: student.grade, isActive: true }).lean(),
-    Payment.find({ studentId: student._id }).lean(),
+    Payment.find({ studentId: student._id, status: { $ne: "Cancelled" } }).lean(),
   ]);
 
   const structureTotal = structures.reduce((sum, item: any) => sum + (item.amount || 0), 0);
-  const paymentTotal = payments.reduce((sum, item: any) => sum + (item.amount || 0), 0);
+  const paidTowardFees = payments.reduce(
+    (sum, item: any) => sum + (item.baseAmount ?? item.amount ?? 0) + (item.waiverAmount || 0),
+    0
+  );
+  const totalWaived = payments.reduce((sum, item: any) => sum + (item.waiverAmount || 0), 0);
+  const totalFine = payments.reduce((sum, item: any) => sum + (item.fineAmount || 0), 0);
+  const totalCollected = payments.reduce((sum, item: any) => sum + (item.amount || 0), 0);
   const hasStructures = structures.length > 0;
 
   const total = hasStructures ? structureTotal : student.fees?.total || 0;
-  const paid = paymentTotal > 0 ? paymentTotal : student.fees?.paid || 0;
+  const paid = paidTowardFees > 0 ? paidTowardFees : student.fees?.paid || 0;
   const pending = Math.max(total - paid, 0);
+  const waived = totalWaived > 0 ? totalWaived : student.fees?.waived || 0;
+  const fine = totalFine > 0 ? totalFine : student.fees?.fine || 0;
+  const collected = totalCollected > 0 ? totalCollected : student.fees?.collected || 0;
 
-  return { total, paid, pending };
+  return { total, paid, pending, waived, fine, collected };
 }
 
 export async function syncStudentFeeSummary(studentId: string) {

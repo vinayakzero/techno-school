@@ -18,6 +18,9 @@ export async function addFeeStructureAction(formData: FormData) {
       dueDate: new Date(formData.get("dueDate")?.toString() || new Date().toISOString()),
       category: formData.get("category")?.toString() || "Tuition",
       description: formData.get("description")?.toString() || "",
+      lateFeeAmount: Number(formData.get("lateFeeAmount")) || 0,
+      installmentAllowed: formData.get("installmentAllowed")?.toString() === "true",
+      installmentCount: Math.max(Number(formData.get("installmentCount")) || 1, 1),
       isActive: formData.get("isActive")?.toString() === "true",
     };
 
@@ -51,6 +54,9 @@ export async function updateFeeStructureAction(id: string, formData: FormData) {
       dueDate: new Date(formData.get("dueDate")?.toString() || new Date().toISOString()),
       category: formData.get("category")?.toString() || "Tuition",
       description: formData.get("description")?.toString() || "",
+      lateFeeAmount: Number(formData.get("lateFeeAmount")) || 0,
+      installmentAllowed: formData.get("installmentAllowed")?.toString() === "true",
+      installmentCount: Math.max(Number(formData.get("installmentCount")) || 1, 1),
       isActive: formData.get("isActive")?.toString() === "true",
     };
 
@@ -103,15 +109,33 @@ export async function recordPaymentAction(formData: FormData) {
     }
 
     const receiptNo = formData.get("receiptNo")?.toString()?.trim() || generateReceiptNumber();
+    const amountReceived = Number(formData.get("amount")) || 0;
+    const fineAmount = Number(formData.get("fineAmount")) || 0;
+    const waiverAmount = Number(formData.get("waiverAmount")) || 0;
+    const baseAmount = Math.max(amountReceived - fineAmount, 0);
+
+    if (amountReceived <= 0 && waiverAmount <= 0) {
+      return { success: false, error: "Enter a payment amount or waiver amount." };
+    }
+
+    if (fineAmount > amountReceived) {
+      return { success: false, error: "Late fee cannot exceed the collected amount." };
+    }
 
     const payment = await Payment.create({
       studentId,
       feeStructureId: formData.get("feeStructureId")?.toString() || null,
       grade: student.grade,
-      amount: Number(formData.get("amount")) || 0,
+      amount: amountReceived,
+      baseAmount,
+      fineAmount,
+      waiverAmount,
       date: new Date(formData.get("date")?.toString() || new Date().toISOString()),
       mode: formData.get("mode")?.toString() || "Cash",
       receiptNo,
+      installmentLabel: formData.get("installmentLabel")?.toString() || "",
+      collectedBy: formData.get("collectedBy")?.toString() || "",
+      status: "Posted",
       notes: formData.get("notes")?.toString() || "",
     });
 
@@ -119,6 +143,7 @@ export async function recordPaymentAction(formData: FormData) {
 
     revalidatePath("/admin/fees");
     revalidatePath("/admin");
+    revalidatePath("/admin/fees/daily-collection");
     revalidatePath(`/admin/students/${studentId}`);
     revalidatePath(`/admin/fees/receipts/${payment._id.toString()}`);
 
@@ -145,6 +170,7 @@ export async function deletePaymentAction(id: string) {
 
     revalidatePath("/admin/fees");
     revalidatePath("/admin");
+    revalidatePath("/admin/fees/daily-collection");
     revalidatePath(`/admin/students/${payment.studentId.toString()}`);
     return { success: true };
   } catch (error: any) {

@@ -22,6 +22,12 @@ export default function StudentProfileActions({ student }: { student: any }) {
       >
         <Edit2 size={15} /> Edit
       </Link>
+      <Link
+        href={`/admin/students/${student._id}/operations`}
+        className="inline-flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-800/50 dark:bg-blue-900/10 dark:text-blue-300 dark:hover:bg-blue-900/20"
+      >
+        Manage Status
+      </Link>
       <button
         onClick={handleDelete}
         className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-semibold text-red-600 transition-colors hover:bg-red-100 dark:border-red-800/50 dark:bg-red-900/10 dark:text-red-400 dark:hover:bg-red-900/20"

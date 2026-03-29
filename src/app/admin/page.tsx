@@ -5,6 +5,7 @@ import Teacher from "@/models/Teacher";
 import ClassModel from "@/models/Class";
 import Payment from "@/models/Payment";
 import Setting from "@/models/Setting";
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
@@ -32,9 +33,14 @@ export default async function AdminDashboard() {
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-zinc-100">Overview</h1>
           <p className="text-gray-500 dark:text-zinc-400">Welcome back, Administrator. Here's what's happening today.</p>
         </div>
-        <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-500 transition-colors shadow-sm">
-          Download Report
-        </button>
+        <div className="flex gap-3">
+          <Link href="/admin/students" className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800">
+            Open Students
+          </Link>
+          <Link href="/admin/fees" className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-blue-500">
+            Open Fees
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -73,7 +79,7 @@ export default async function AdminDashboard() {
         <div className="lg:col-span-2 bg-white dark:bg-zinc-900 rounded-xl border border-gray-200 dark:border-zinc-800 p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg font-bold text-gray-900 dark:text-zinc-100">Recent Students</h2>
-            <button className="text-sm font-medium text-blue-600 hover:underline">View all</button>
+            <Link href="/admin/students" className="text-sm font-medium text-blue-600 hover:underline">View all</Link>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">

@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, GraduationCap, Calendar, Settings, LogOut, BookOpen, ClipboardCheck, Wallet, CalendarDays, FileText } from "lucide-react";
+import { LayoutDashboard, Users, GraduationCap, Calendar, Settings, LogOut, BookOpen, ClipboardCheck, Wallet, CalendarDays, FileText, School } from "lucide-react";
 import Link from "next/link";
 
 export default function AdminLayout({
@@ -21,6 +21,8 @@ export default function AdminLayout({
           <SidebarItem icon={<Users size={20} />} label="Teachers" href="/admin/teachers" />
           <SidebarItem icon={<GraduationCap size={20} />} label="Classes" href="/admin/classes" />
           <SidebarItem icon={<BookOpen size={20} />} label="Subjects" href="/admin/subjects" />
+          <SidebarItem icon={<School size={20} />} label="Courses" href="/admin/courses" />
+          <SidebarItem icon={<FileText size={20} />} label="Syllabus" href="/admin/syllabus" />
           <SidebarItem icon={<ClipboardCheck size={20} />} label="Exams" href="/admin/exams" />
           <SidebarItem icon={<Calendar size={20} />} label="Attendance" href="/admin/attendance" />
           <SidebarItem icon={<CalendarDays size={20} />} label="Calendar" href="/admin/calendar" />

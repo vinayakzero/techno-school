@@ -7,6 +7,9 @@ export interface IFeeStructure extends Document {
   dueDate: Date;
   category: "Tuition" | "Transport" | "Library" | "Examination" | "Miscellaneous";
   description?: string;
+  lateFeeAmount?: number;
+  installmentAllowed: boolean;
+  installmentCount: number;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -24,6 +27,9 @@ const FeeStructureSchema = new Schema<IFeeStructure>(
       default: "Tuition",
     },
     description: { type: String, default: "" },
+    lateFeeAmount: { type: Number, default: 0, min: 0 },
+    installmentAllowed: { type: Boolean, default: false },
+    installmentCount: { type: Number, default: 1, min: 1 },
     isActive: { type: Boolean, default: true },
   },
   { timestamps: true }

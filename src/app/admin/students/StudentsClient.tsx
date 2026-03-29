@@ -13,7 +13,9 @@ export default function StudentsClient({ students: initialStudents }: { students
   const filtered = students.filter(s =>
     s.name.toLowerCase().includes(search.toLowerCase()) ||
     s.email.toLowerCase().includes(search.toLowerCase()) ||
-    s.grade.toLowerCase().includes(search.toLowerCase())
+    s.grade.toLowerCase().includes(search.toLowerCase()) ||
+    (s.admissionNumber || "").toLowerCase().includes(search.toLowerCase()) ||
+    (s.rollNumber || "").toLowerCase().includes(search.toLowerCase())
   );
 
   const handleDelete = async (id: string, name: string) => {
@@ -60,6 +62,7 @@ export default function StudentsClient({ students: initialStudents }: { students
             <thead>
               <tr className="border-b border-gray-200 bg-gray-50/50 text-gray-500 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-400">
                 <th className="px-6 py-4 font-medium">Student Info</th>
+                <th className="px-6 py-4 font-medium">Identity</th>
                 <th className="px-6 py-4 font-medium">Grade / Section</th>
                 <th className="px-6 py-4 font-medium">Date of Birth</th>
                 <th className="px-6 py-4 font-medium">Status</th>
@@ -75,10 +78,14 @@ export default function StudentsClient({ students: initialStudents }: { students
                         {student.name.split(" ").slice(0, 2).map((n: string) => n[0]).join("")}
                       </div>
                       <div>
-                        <a href={`/admin/students/${student._id}`} className="font-semibold text-gray-900 transition-colors hover:text-blue-600 dark:text-zinc-100 dark:hover:text-blue-400">{student.name}</a>
+                        <Link href={`/admin/students/${student._id}`} className="font-semibold text-gray-900 transition-colors hover:text-blue-600 dark:text-zinc-100 dark:hover:text-blue-400">{student.name}</Link>
                         <div className="text-xs text-gray-500 dark:text-zinc-400">{student.email}</div>
                       </div>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="font-medium text-gray-900 dark:text-zinc-200">{student.admissionNumber || "-"}</div>
+                    <div className="text-xs text-gray-500 dark:text-zinc-400">Roll {student.rollNumber || "-"}</div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="font-medium text-gray-900 dark:text-zinc-200">{student.grade}</div>
